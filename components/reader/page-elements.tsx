@@ -37,7 +37,9 @@ export function PageElements({ elements }: { elements: BookPageElement[] }) {
             return (
               <View key={i} style={styles.quoteBlock}>
                 <Text style={[styles.quoteMark, serif]}>❞</Text>
-                <Text style={[styles.quoteBody, serif]}>{el.content}</Text>
+                <View style={styles.quotePanel}>
+                  <Text style={[styles.quoteBody, serif]}>{el.content}</Text>
+                </View>
               </View>
             );
           case "keywords":
@@ -66,17 +68,25 @@ const styles = StyleSheet.create({
   },
   quoteBlock: {
     marginBottom: 24,
-    paddingLeft: 8,
   },
   quoteMark: {
-    color: "#9E9E9E",
-    fontSize: 42,
-    lineHeight: 44,
-    marginBottom: 4,
+    color: "#7A7A7A",
+    fontSize: 22,
+    lineHeight: 24,
+    marginBottom: 8,
+    marginLeft: 2,
+  },
+  quotePanel: {
+    backgroundColor: "#1E1E22",
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#2E2E32",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
   },
   quoteBody: {
-    color: "#ECECEC",
-    fontSize: 20,
+    color: "#EDEDED",
+    fontSize: 19,
     fontWeight: "500",
     lineHeight: 30,
   },
