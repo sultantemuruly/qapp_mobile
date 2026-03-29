@@ -1,15 +1,15 @@
 import type { BookPageElement } from "@/db/schema";
-import { Fonts } from "@/constants/theme";
-import { StyleSheet, Text, View } from "react-native";
-
-const serif = { fontFamily: Fonts.serif };
+import { Text, View } from "react-native";
 
 function KeywordsBlock({ items }: { items: string[] }) {
   return (
-    <View style={styles.keywordsWrap}>
+    <View className="mb-4 mt-2 flex-row flex-wrap gap-2.5">
       {items.map((kw, i) => (
-        <View key={`${kw}-${i}`} style={styles.keywordChip}>
-          <Text style={[styles.keywordText, serif]}>{kw}</Text>
+        <View
+          key={`${kw}-${i}`}
+          className="rounded-full border border-[#3A3A3A] bg-[#1A1A1A] px-3.5 py-2"
+        >
+          <Text className="font-reader text-sm text-[#CFCFCF]">{kw}</Text>
         </View>
       ))}
     </View>
@@ -23,22 +23,32 @@ export function PageElements({ elements }: { elements: BookPageElement[] }) {
         switch (el.type) {
           case "chapter_name":
             return (
-              <Text key={i} style={[styles.chapterTitle, serif]}>
+              <Text
+                key={i}
+                className="mb-7 font-reader text-[26px] font-bold leading-8 text-[#F0F0F0]"
+              >
                 {el.content}
               </Text>
             );
           case "text":
             return (
-              <Text key={i} style={[styles.bodyText, serif]}>
+              <Text
+                key={i}
+                className="mb-5 font-reader text-[17px] leading-7 text-[#E0E0E0]"
+              >
                 {el.content}
               </Text>
             );
           case "quote":
             return (
-              <View key={i} style={styles.quoteBlock}>
-                <Text style={[styles.quoteMark, serif]}>❞</Text>
-                <View style={styles.quotePanel}>
-                  <Text style={[styles.quoteBody, serif]}>{el.content}</Text>
+              <View key={i} className="mb-6">
+                <Text className="mb-2 ml-0.5 font-reader text-[22px] leading-6 text-[#7A7A7A]">
+                  ❞
+                </Text>
+                <View className="rounded-xl border border-[#2E2E32] bg-[#1E1E22] px-[18px] py-4">
+                  <Text className="font-reader text-[19px] font-medium leading-[30px] text-[#EDEDED]">
+                    {el.content}
+                  </Text>
                 </View>
               </View>
             );
@@ -51,62 +61,3 @@ export function PageElements({ elements }: { elements: BookPageElement[] }) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  chapterTitle: {
-    color: "#F0F0F0",
-    fontSize: 26,
-    fontWeight: "700",
-    lineHeight: 32,
-    marginBottom: 28,
-  },
-  bodyText: {
-    color: "#E0E0E0",
-    fontSize: 17,
-    lineHeight: 28,
-    marginBottom: 20,
-  },
-  quoteBlock: {
-    marginBottom: 24,
-  },
-  quoteMark: {
-    color: "#7A7A7A",
-    fontSize: 22,
-    lineHeight: 24,
-    marginBottom: 8,
-    marginLeft: 2,
-  },
-  quotePanel: {
-    backgroundColor: "#1E1E22",
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#2E2E32",
-    paddingVertical: 16,
-    paddingHorizontal: 18,
-  },
-  quoteBody: {
-    color: "#EDEDED",
-    fontSize: 19,
-    fontWeight: "500",
-    lineHeight: 30,
-  },
-  keywordsWrap: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  keywordChip: {
-    borderWidth: 1,
-    borderColor: "#3A3A3A",
-    backgroundColor: "#1A1A1A",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  keywordText: {
-    color: "#CFCFCF",
-    fontSize: 14,
-  },
-});

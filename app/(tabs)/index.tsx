@@ -1,29 +1,17 @@
+import { BookCarousel } from "@/components/books/book-carousel";
 import { coverUrl, fetchBooks } from "@/lib/books";
-import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get("window");
-const GAP = 12;
-const PAD = 16;
-const COLS = 2;
-const CARD_W = (width - PAD * 2 - GAP) / COLS;
-
-export default function LibraryScreen() {
-  const router = useRouter();
+export default function ForYouScreen() {
   const [items, setItems] = useState<
-    { id: number; title: string; bookId: string; cover: string | null }[]
+    {
+      id: number;
+      title: string;
+      bookId: string;
+      cover: string | null;
+    }[]
   >([]);
   const [tableRowCount, setTableRowCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -62,137 +50,47 @@ export default function LibraryScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe} edges={["top"]}>
-      <Text style={styles.screenTitle}>Library</Text>
+    <SafeAreaView className="flex-1 bg-[#151718]" edges={["top"]}>
+      <View className="px-4 pb-3 pt-1">
+        <Text className="text-3xl font-bold text-[#ECEDEE]">For you</Text>
+        <Text className="mt-1 text-sm text-[#9BA1A6]">
+          Swipe through your library
+        </Text>
+      </View>
+
       {loading && (
-        <View style={styles.center}>
+        <View className="flex-1 items-center justify-center p-6">
           <ActivityIndicator size="large" color="#0a7ea4" />
         </View>
       )}
+
       {!loading && error && (
-        <View style={styles.center}>
-          <Text style={styles.error}>{error}</Text>
-          <Pressable onPress={load} style={styles.retry}>
-            <Text style={styles.retryText}>Retry</Text>
+        <View className="flex-1 items-center justify-center px-6">
+          <Text className="mb-3 text-center text-base text-[#ECEDEE]">
+            {error}
+          </Text>
+          <Pressable
+            onPress={load}
+            className="rounded-[10px] bg-[#2C2C2C] px-5 py-2.5 active:opacity-80"
+          >
+            <Text className="font-semibold text-white">Retry</Text>
           </Pressable>
         </View>
       )}
+
       {!loading && !error && items.length === 0 && (
-        <View style={styles.center}>
-          <Text style={styles.empty}>
+        <View className="flex-1 items-center justify-center px-6">
+          <Text className="text-center text-base text-[#9BA1A6]">
             {tableRowCount === 0
               ? "No books returned from the server. If rows exist in Postgres, open the Supabase SQL editor and run db/supabase-books-anon-select.sql so the anon key can SELECT public.books."
               : "Received book rows but could not read the JSON. Ensure each data object has book_id (or bookId) and pages (array); title defaults to Untitled if missing."}
           </Text>
         </View>
       )}
+
       {!loading && !error && items.length > 0 && (
-        <ScrollView
-          contentContainerStyle={styles.grid}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        >
-          {items.map((book) => (
-            <Pressable
-              key={`${book.id}-${book.bookId}`}
-              style={({ pressed }) => [
-                styles.card,
-                pressed && styles.cardPressed,
-              ]}
-              onPress={() =>
-                router.push(`/reader/${encodeURIComponent(book.bookId)}`)
-              }
-            >
-              <View style={styles.coverWrap}>
-                {book.cover ? (
-                  <Image
-                    source={{ uri: book.cover }}
-                    style={styles.cover}
-                    contentFit="cover"
-                  />
-                ) : (
-                  <View style={[styles.cover, styles.coverPlaceholder]} />
-                )}
-              </View>
-              <Text style={styles.cardTitle} numberOfLines={2}>
-                {book.title}
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
+        <BookCarousel items={items} refreshing={refreshing} onRefresh={onRefresh} />
       )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: "#151718",
-  },
-  screenTitle: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#ECEDEE",
-    paddingHorizontal: PAD,
-    paddingBottom: 12,
-  },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  error: {
-    color: "#ECEDEE",
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  retry: {
-    backgroundColor: "#2C2C2C",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  retryText: {
-    color: "#FFF",
-    fontWeight: "600",
-  },
-  empty: {
-    color: "#9BA1A6",
-    fontSize: 16,
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    paddingHorizontal: PAD,
-    paddingBottom: 24,
-    gap: GAP,
-  },
-  card: {
-    width: CARD_W,
-  },
-  cardPressed: {
-    opacity: 0.85,
-  },
-  coverWrap: {
-    borderRadius: 12,
-    overflow: "hidden",
-    marginBottom: 8,
-  },
-  cover: {
-    width: "100%",
-    aspectRatio: 2 / 3,
-    backgroundColor: "#2C2C2C",
-  },
-  coverPlaceholder: {
-    backgroundColor: "#333",
-  },
-  cardTitle: {
-    color: "#ECEDEE",
-    fontSize: 15,
-    fontWeight: "600",
-    lineHeight: 20,
-  },
-});
