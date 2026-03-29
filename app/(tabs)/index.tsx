@@ -25,6 +25,7 @@ export default function LibraryScreen() {
   const [items, setItems] = useState<
     { id: number; title: string; bookId: string; cover: string | null }[]
   >([]);
+  const [tableRowCount, setTableRowCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,9 +33,10 @@ export default function LibraryScreen() {
   const load = useCallback(async () => {
     try {
       setError(null);
-      const rows = await fetchBooks();
+      const { books, tableRowCount: rowCount } = await fetchBooks();
+      setTableRowCount(rowCount);
       setItems(
-        rows.map((r) => ({
+        books.map((r) => ({
           id: r.id,
           title: r.document.title,
           bookId: r.document.book_id,
@@ -77,7 +79,11 @@ export default function LibraryScreen() {
       )}
       {!loading && !error && items.length === 0 && (
         <View style={styles.center}>
-          <Text style={styles.empty}>No books yet.</Text>
+          <Text style={styles.empty}>
+            {tableRowCount === 0
+              ? "No books returned from the server. If rows exist in Postgres, open the Supabase SQL editor and run db/supabase-books-anon-select.sql so the anon key can SELECT public.books."
+              : "Received book rows but could not read the JSON. Ensure each data object has book_id (or bookId) and pages (array); title defaults to Untitled if missing."}
+          </Text>
         </View>
       )}
       {!loading && !error && items.length > 0 && (
@@ -89,7 +95,7 @@ export default function LibraryScreen() {
         >
           {items.map((book) => (
             <Pressable
-              key={book.id}
+              key={`${book.id}-${book.bookId}`}
               style={({ pressed }) => [
                 styles.card,
                 pressed && styles.cardPressed,
