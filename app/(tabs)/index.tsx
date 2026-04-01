@@ -50,37 +50,41 @@ export default function ForYouScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#151718]" edges={["top"]}>
-      <View className="px-4 pb-3 pt-1">
-        <Text className="text-3xl font-bold text-[#ECEDEE]">For you</Text>
-        <Text className="mt-1 text-sm text-[#9BA1A6]">
-          Swipe through your library
+    <SafeAreaView className="flex-1 bg-[#121518]" edges={["top"]}>
+      <View className="border-b border-white/[0.06] px-5 pb-4 pt-2">
+        <Text className="text-[26px] font-semibold tracking-tight text-[#E8EAED]">
+          For you
+        </Text>
+        <Text className="mt-1 text-[13px] font-normal leading-[18px] text-[#8B9399]">
+          Swipe covers to browse · pull down to refresh
         </Text>
       </View>
 
       {loading && (
         <View className="flex-1 items-center justify-center p-6">
-          <ActivityIndicator size="large" color="#0a7ea4" />
+          <ActivityIndicator size="large" color="#8B9399" />
         </View>
       )}
 
       {!loading && error && (
         <View className="flex-1 items-center justify-center px-6">
-          <Text className="mb-3 text-center text-base text-[#ECEDEE]">
+          <Text className="mb-4 text-center text-[15px] leading-[22px] text-[#C4C8CC]">
             {error}
           </Text>
           <Pressable
             onPress={load}
-            className="rounded-[10px] bg-[#2C2C2C] px-5 py-2.5 active:opacity-80"
+            className="rounded-xl border border-white/10 bg-[#1E2328] px-6 py-3 active:opacity-90"
           >
-            <Text className="font-semibold text-white">Retry</Text>
+            <Text className="text-[15px] font-semibold text-[#E8EAED]">
+              Retry
+            </Text>
           </Pressable>
         </View>
       )}
 
       {!loading && !error && items.length === 0 && (
         <View className="flex-1 items-center justify-center px-6">
-          <Text className="text-center text-base text-[#9BA1A6]">
+          <Text className="text-center text-[15px] leading-[22px] text-[#8B9399]">
             {tableRowCount === 0
               ? "No books returned from the server. If rows exist in Postgres, open the Supabase SQL editor and run db/supabase-books-anon-select.sql so the anon key can SELECT public.books."
               : "Received book rows but could not read the JSON. Ensure each data object has book_id (or bookId) and pages (array); title defaults to Untitled if missing."}
